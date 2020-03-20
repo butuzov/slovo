@@ -14,6 +14,7 @@ setup(
     author_email="butuzov@made.ua",
     platforms=["OS Independent"],
     keywords=["words", "dictionalies"],
+    python_requires='>=3.6',
     packages=find_packages(exclude=['tests']),
     license="MIT",
     classifiers=[

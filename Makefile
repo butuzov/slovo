@@ -29,7 +29,7 @@ venv:
 
 install: venv ## Dev Installs Reqired Packages
 	python3 -m pip install setuptools twine -q
-	python3 -m pip install yapf pylint pytest -q
+	python3 -m pip install yapf pylint pytest coverage pytest-cov -q
 	python3 -m pip install -e .
 
 
@@ -39,7 +39,7 @@ clean: ## Cleanup Build artifacts
 
 .PHONY: tests
 tests:  venv ## Tests
-	$(PYTEST)
+	$(PYTEST) --cov=$(PACKAGE);
 
 build: venv clean ## Build distro (source) - Production
 	@ $(PYTHON) setup.py sdist > /dev/null 2>&1

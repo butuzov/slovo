@@ -6,6 +6,7 @@ from slovo import Gender, Term
 from slovo import (
     ImmutableClassError,
     DiffLangsError,
+    SameLangsError,
 )
 
 
@@ -16,13 +17,37 @@ class Word():
         self._translations: Dict[str, Set[Word]] = {}
         self._synonyms: Set[Word] = set()
         self._word: str = word
+        self._plural: Optional[bool] = None
 
         # TODO: inbound collections
+        self._translations: Dict[str, Set[Word]] = {}
 
         # default none/zero values
         self._term: Term = Term.NONE
         self._gender: Optional[Gender] = None
-        self._img: Optional[str] = None
+
+        self._image: Optional[str] = None
+        self._sound: Optional[str] = None
+
+    def translates_to(self, word: Word) -> None:
+
+        if self.lang == word.lang:
+            raise SameLangsError("Translate: accept word of the other language")
+
+        values = self._translations.get(word.lang, set())
+        if word not in values:
+            values.add(word)
+            self._translations[word.lang] = values
+        else:
+            return
+
+        word.translates_to(self)
+
+    def translations(self) -> Dict[str, Set[Word]]:
+        return self._translations
+
+    def translation(self, lang: str) -> Set[Word]:
+        return self._translations.get(lang, set())
 
     @property
     def value(self) -> str:
@@ -50,18 +75,41 @@ class Word():
         self._gender = gender
         return self
 
-    def picture(self, src: str) -> Word:
+    def get_image(self) -> Optional[str]:
+        return self._image
+
+    def image(self, image: str) -> Word:
         """ set picture for word or phrase"""
-        self._img = src
+        self._image = image
         return self
 
-    def img(self) -> Optional[str]:
-        return self._img
+    def get_sound(self) -> Optional[str]:
+        return self._sound
+
+    def sound(self, sound: str) -> Word:
+        """ set picture for word or phrase"""
+        self._sound = sound
+        return self
+
+    def get_plural(self) -> Optional[bool]:
+        return self._plural
+
+    def plural(self, is_it_plural: bool) -> Word:
+        """ set picture for word or phrase"""
+        self._plural = bool(is_it_plural)
+        return self
 
     def __str__(self) -> str:
 
         if self.lang:
             return "({}) {}".format(self.lang, self._word)
+
+        return "{}".format(self._word)
+
+    def __html__(self) -> str:
+
+        if self.lang:
+            return "<small>({})</small> {}".format(self.lang, self._word)
 
         return "{}".format(self._word)
 
@@ -76,10 +124,12 @@ class Word():
         attrs.append(f"term={self._term}" if self._term != Term.NONE else "")
         attrs.append(f"gender={self._gender}" if self._gender else "")
 
-        return '<%s %s>%s</%s>' % (self.lang, " ".join(attrs).strip(), self.value, self.lang)
+        attrs = " ".join(attrs).strip()
+
+        return '<%s%s>%s</%s>' % (self.lang, attrs.strip(), self.value, self.lang)
 
     def __add__(self, word: Word) -> Word:
-        # TODO: Better add mehanisms
+        # TODO: Better add mechanics
 
         if self.lang != word.lang:
             raise DiffLangsError("Different languages")
