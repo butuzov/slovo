@@ -1,3 +1,6 @@
 *.egg-info
 *cache*
 *.venv*
+/dist
+/.coverage
+*settings.json
