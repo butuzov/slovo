@@ -24,10 +24,11 @@ setup(
     keywords=["words", "dictionalies"],
     python_requires='>=3.6',
     packages=find_packages(exclude=['tests']),
-    license="MIT",
+    license="Apache License 2.0",
     classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Education",
+        "License :: OSI Approved :: Apache Software License",
         "Topic :: Education",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
